@@ -70,4 +70,15 @@ describe("error mapping", () => {
         respondStatus(404);
         await expect(makeClient({ maxRetries: 0 }).users.current()).rejects.toBeInstanceOf(WakatimeError);
     });
+
+    it("redacts the Authorization header from the error cause", async () => {
+        respondStatus(401);
+
+        const error = (await makeClient({ maxRetries: 0 })
+            .users.current()
+            .catch((caught: unknown) => caught)) as WakatimeError;
+
+        const cause = error.cause as { config?: { headers?: { get?: (name: string) => unknown } } };
+        expect(cause.config?.headers?.get?.("Authorization")).toBe("REDACTED");
+    });
 });

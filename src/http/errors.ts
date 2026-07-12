@@ -1,4 +1,31 @@
+import { AxiosHeaders } from "axios";
 import type { AxiosError } from "axios";
+
+const REDACTED = "REDACTED";
+
+// Strip credentials from a failed request's config so the AxiosError, attached
+// as `cause`, can be logged or serialized without leaking the API key. The
+// error is already spent (not reused for the request), so mutating is safe.
+const redactCredentials = (error: AxiosError): void => {
+    const config = error.config;
+    if (!config) {
+        return;
+    }
+
+    const { headers } = config;
+    if (headers instanceof AxiosHeaders) {
+        if (headers.has("Authorization")) {
+            headers.set("Authorization", REDACTED);
+        }
+    } else if (headers && typeof headers === "object" && "Authorization" in headers) {
+        (headers as Record<string, unknown>).Authorization = REDACTED;
+    }
+
+    const params = config.params as Record<string, unknown> | undefined;
+    if (params && params.api_key !== undefined) {
+        params.api_key = REDACTED;
+    }
+};
 
 interface WakatimeErrorOptions {
     statusCode?: number | undefined;
@@ -94,6 +121,7 @@ const parseRetryAfter = (headerValue: unknown): number | undefined => {
 
 // Convert a rejected axios request into the matching WakatimeError subclass.
 export const mapErrorFromResponse = (error: AxiosError): WakatimeError => {
+    redactCredentials(error);
     const method = error.config?.method?.toUpperCase();
     const url = error.config?.url;
 

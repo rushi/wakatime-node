@@ -1,0 +1,28 @@
+// OAuth 2.0 scopes accepted by the WakaTime authorize endpoint.
+// See https://wakatime.com/developers#authentication
+export type WakatimeScope =
+    | "email"
+    | "read_summaries"
+    | "read_summaries.categories"
+    | "read_summaries.dependencies"
+    | "read_summaries.editors"
+    | "read_summaries.languages"
+    | "read_summaries.machines"
+    | "read_summaries.operating_systems"
+    | "read_summaries.projects"
+    | "read_stats"
+    | "read_stats.best_day"
+    | "read_stats.categories"
+    | "read_stats.dependencies"
+    | "read_stats.editors"
+    | "read_stats.languages"
+    | "read_stats.machines"
+    | "read_stats.operating_systems"
+    | "read_stats.projects"
+    | "read_goals"
+    | "read_orgs"
+    | "write_orgs"
+    | "read_private_leaderboards"
+    | "write_private_leaderboards"
+    | "read_heartbeats"
+    | "write_heartbeats";

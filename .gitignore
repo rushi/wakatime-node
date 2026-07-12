@@ -4,3 +4,4 @@ dist/
 git_ignore
 docs/superpowers
 /.eslintcache
+/.env.local

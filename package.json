@@ -26,7 +26,8 @@
         "format": "prettier -l --write .",
         "typecheck": "tsc --noEmit",
         "test": "vitest run",
-        "test:watch": "vitest"
+        "test:watch": "vitest",
+        "test:functional": "vitest run --config vitest.functional.config.ts"
     },
     "keywords": [
         "wakatime",

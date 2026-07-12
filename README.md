@@ -141,3 +141,9 @@ pnpm build
 ```
 
 Unit tests mock all HTTP with [MSW](https://mswjs.io) and run offline.
+
+Functional tests hit the live WakaTime API and are read-only. They run only when `WAKATIME_API_KEY` is set, and skip otherwise:
+
+```bash
+WAKATIME_API_KEY=waka_... pnpm test:functional
+```

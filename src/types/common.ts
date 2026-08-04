@@ -48,3 +48,8 @@ export interface GranularEntry {
 export interface DataEnvelope<T> {
     data: T;
 }
+
+// Some `data`-enveloped list endpoints (user agents, machine names, projects)
+// also paginate, with the paging fields sitting alongside `data` rather than
+// nested inside it.
+export interface PaginatedDataEnvelope<T> extends DataEnvelope<T>, Pagination {}

@@ -18,7 +18,14 @@ export {
 export type { Page } from "./http/pagination.js";
 export { paginate } from "./http/pagination.js";
 
-export type { DataEnvelope, DateRange, GranularEntry, Pagination, StatsRange } from "./types/common.js";
+export type {
+    DataEnvelope,
+    DateRange,
+    GranularEntry,
+    Pagination,
+    PaginatedDataEnvelope,
+    StatsRange,
+} from "./types/common.js";
 export type { WakatimeScope } from "./types/scopes.js";
 
 // OAuth 2.0 server-side helpers.

@@ -149,3 +149,9 @@ Functional tests hit the live WakaTime API and are read-only. They run only when
 ```bash
 WAKATIME_API_KEY=waka_... pnpm test:functional
 ```
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full contributor workflow.
+
+## License
+
+[MIT](./LICENSE)

@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "description": "Typed TypeScript SDK for the WakaTime REST API",
     "type": "module",
+    "packageManager": "pnpm@10.34.1",
     "main": "./dist/index.js",
     "module": "./dist/index.js",
     "types": "./dist/index.d.ts",
@@ -37,7 +38,15 @@
         "coding-stats"
     ],
     "author": "Rushi Vishavadia <rushi@hey.com>",
-    "license": "ISC",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/rushi/wakatime-node.git"
+    },
+    "homepage": "https://github.com/rushi/wakatime-node#readme",
+    "bugs": {
+        "url": "https://github.com/rushi/wakatime-node/issues"
+    },
     "dependencies": {
         "axios": "^1.18.1",
         "lodash-es": "^4.18.1"

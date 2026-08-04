@@ -14,6 +14,8 @@ API reference: https://wakatime.com/developers
 ## Installation
 
 ```bash
+npm install wakatime-node
+# or
 pnpm add wakatime-node
 ```
 

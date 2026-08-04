@@ -1,5 +1,7 @@
 ## wakatime-node
 
+[![npm version](https://img.shields.io/npm/v/wakatime-node.svg)](https://www.npmjs.com/package/wakatime-node)
+
 Typed TypeScript SDK for the [WakaTime REST API](https://wakatime.com/developers). It handles authentication, error mapping, retries, and pagination so you call `client.stats.get("last_7_days")` and get back a typed object instead of hand-rolling fetch requests.
 
 API reference: https://wakatime.com/developers

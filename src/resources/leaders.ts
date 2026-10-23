@@ -46,6 +46,9 @@ export interface LeadersResponse {
     modified_at?: string | null;
 }
 
+// Ranking metric: hours coded, hours excluding AI coding, AI lines, or AI spend.
+export type LeaderboardType = "time" | "manual" | "ai" | "spend";
+
 export interface LeadersOptions {
     // Filter to a single language leaderboard.
     language?: string;
@@ -53,6 +56,8 @@ export interface LeadersOptions {
     countryCode?: string;
     // Only include developers open to being hired.
     isHireable?: boolean;
+    // Defaults to "time".
+    boardType?: LeaderboardType;
     page?: number;
 }
 

@@ -1,7 +1,7 @@
 import type { DataEnvelope } from "../types/common.js";
 import { toQueryParams } from "../util/query.js";
 import { BaseResource } from "./base.js";
-import type { Leader } from "./leaders.js";
+import type { Leader, LeaderboardType } from "./leaders.js";
 
 export interface PrivateLeaderboard {
     id: string;
@@ -41,6 +41,8 @@ export interface LeaderboardsOptions {
 export interface BoardLeadersOptions extends LeaderboardsOptions {
     language?: string;
     countryCode?: string;
+    // Defaults to "time".
+    boardType?: LeaderboardType;
     page?: number;
 }
 

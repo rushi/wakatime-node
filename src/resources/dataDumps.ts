@@ -21,7 +21,7 @@ export interface DataDumpsOptions {
 }
 
 export interface CreateDataDumpOptions extends DataDumpsOptions {
-    // Email the user when the export is ready.
+    // Email the user when the export is ready. The API defaults to true.
     emailWhenFinished?: boolean;
 }
 
@@ -35,7 +35,7 @@ export class DataDumpsResource extends BaseResource {
     // POST /users/:user/data_dumps - request a new export.
     async create(type: DataDumpType, options: CreateDataDumpOptions = {}): Promise<DataDump> {
         const path = `${this.userSegment(options.user)}/data_dumps`;
-        const body = { type, email_when_finished: options.emailWhenFinished ?? false };
+        const body = { type, email_when_finished: options.emailWhenFinished ?? true };
         const response = await this.http.post<DataEnvelope<DataDump>>(path, body);
         return response.data;
     }

@@ -112,7 +112,7 @@ The SDK never retries `POST`, because a retried create could duplicate heartbeat
 
 Every resource hangs off the client instance:
 
-`users`, `stats`, `summaries`, `allTimeSinceToday`, `statusBar`, `durations`, `externalDurations`, `heartbeats`, `projects`, `commits`, `goals`, `insights`, `leaders`, `leaderboards`, `machineNames`, `userAgents`, `editors`, `programLanguages`, `meta`, `dataDumps`, `customRules`, `orgs`.
+`users`, `stats`, `aggregatedStats`, `summaries`, `allTimeSinceToday`, `statusBar`, `durations`, `externalDurations`, `heartbeats`, `projects`, `commits`, `goals`, `insights`, `leaders`, `leaderboards`, `machineNames`, `userAgents`, `editors`, `programLanguages`, `meta`, `dataDumps`, `customRules`, `orgs`.
 
 ```ts
 const projects = await wakatime.projects.list({ q: "sdk" });

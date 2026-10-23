@@ -70,9 +70,10 @@ export class ExternalDurationsResource extends BaseResource {
         return this.http.post<BulkExternalDurationsResponse>(path, durations);
     }
 
-    // DELETE /users/:user/external_durations.bulk - delete by external id.
-    async deleteBulk(externalIds: string[], options: ExternalDurationsOptions = {}): Promise<void> {
+    // DELETE /users/:user/external_durations.bulk - delete by ExternalDuration
+    // id. Only ids on `date` (YYYY-MM-DD, user's timezone) are deleted.
+    async deleteBulk(date: string, ids: string[], options: ExternalDurationsOptions = {}): Promise<void> {
         const path = `${this.userSegment(options.user)}/external_durations.bulk`;
-        await this.http.delete<unknown>(path, { data: externalIds });
+        await this.http.delete<unknown>(path, { data: { date, ids } });
     }
 }

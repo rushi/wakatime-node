@@ -27,7 +27,7 @@ describe("heartbeats resource", () => {
         expect(machineHeader).toBe("laptop");
     });
 
-    it("deletes heartbeats by id via the bulk endpoint", async () => {
+    it("deletes heartbeats for a date by id via the bulk endpoint", async () => {
         let deletedBody: unknown = null;
         server.use(
             http.delete(`${BASE}/users/current/heartbeats.bulk`, async ({ request }) => {
@@ -36,9 +36,9 @@ describe("heartbeats resource", () => {
             }),
         );
 
-        await makeClient().heartbeats.deleteBulk(["hb1", "hb2"]);
+        await makeClient().heartbeats.deleteBulk("2026-01-02", ["hb1", "hb2"]);
 
-        expect(deletedBody).toEqual(["hb1", "hb2"]);
+        expect(deletedBody).toEqual({ date: "2026-01-02", ids: ["hb1", "hb2"] });
     });
 
     it("does not retry a POST (non-idempotent) on a 5xx", async () => {

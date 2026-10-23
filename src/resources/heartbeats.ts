@@ -17,8 +17,16 @@ export interface HeartbeatInput {
     language?: string;
     dependencies?: string[];
     lines?: number;
-    line_additions?: number;
-    line_deletions?: number;
+    // Lines added or removed by GenAI since the last heartbeat in this file.
+    ai_line_changes?: number;
+    // Lines added or removed by typing since the last heartbeat in this file.
+    human_line_changes?: number;
+    ai_session?: string;
+    // GenAI usage since the last heartbeat.
+    ai_input_tokens?: number;
+    ai_output_tokens?: number;
+    ai_prompt_length?: number;
+    ai_subscription_plan?: string;
     lineno?: number;
     cursorpos?: number;
     is_write?: boolean;
@@ -77,10 +85,11 @@ export class HeartbeatsResource extends BaseResource {
         return this.http.post<BulkHeartbeatsResponse>(path, heartbeats, machineNameConfig(options.machineName));
     }
 
-    // DELETE /users/:user/heartbeats.bulk - delete heartbeats by id.
-    async deleteBulk(ids: string[], options: Pick<HeartbeatsOptions, "user"> = {}): Promise<void> {
+    // DELETE /users/:user/heartbeats.bulk - delete heartbeats by id. Only ids
+    // on `date` (YYYY-MM-DD, user's timezone) are deleted.
+    async deleteBulk(date: string, ids: string[], options: Pick<HeartbeatsOptions, "user"> = {}): Promise<void> {
         const path = `${this.userSegment(options.user)}/heartbeats.bulk`;
-        await this.http.delete<unknown>(path, { data: ids });
+        await this.http.delete<unknown>(path, { data: { date, ids } });
     }
 }
 

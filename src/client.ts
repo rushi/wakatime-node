@@ -1,6 +1,7 @@
 import type { WakatimeConfig } from "./config.js";
 import { resolveConfig } from "./config.js";
 import { HttpClient } from "./http/httpClient.js";
+import { AggregatedStatsResource } from "./resources/aggregatedStats.js";
 import { AllTimeSinceTodayResource } from "./resources/allTimeSinceToday.js";
 import { CommitsResource } from "./resources/commits.js";
 import { CustomRulesResource } from "./resources/customRules.js";
@@ -29,6 +30,7 @@ import { UsersResource } from "./resources/users.js";
 export class WakatimeClient {
     readonly users: UsersResource;
     readonly stats: StatsResource;
+    readonly aggregatedStats: AggregatedStatsResource;
     readonly summaries: SummariesResource;
     readonly allTimeSinceToday: AllTimeSinceTodayResource;
     readonly statusBar: StatusBarResource;
@@ -56,6 +58,7 @@ export class WakatimeClient {
 
         this.users = new UsersResource(http);
         this.stats = new StatsResource(http);
+        this.aggregatedStats = new AggregatedStatsResource(http);
         this.summaries = new SummariesResource(http);
         this.allTimeSinceToday = new AllTimeSinceTodayResource(http);
         this.statusBar = new StatusBarResource(http);

@@ -15,6 +15,10 @@ export interface Duration {
     machine_name_id?: string | null;
     user_agent_id?: string | null;
     is_debugging?: boolean;
+    ai_additions?: number;
+    ai_deletions?: number;
+    human_additions?: number;
+    human_deletions?: number;
 }
 
 export interface DurationsResponse {
@@ -25,6 +29,9 @@ export interface DurationsResponse {
     branches?: string[];
 }
 
+export type DurationsSliceBy =
+    "project" | "entity" | "language" | "dependencies" | "os" | "editor" | "category" | "machine";
+
 export interface DurationsOptions {
     user?: string;
     project?: string;
@@ -32,9 +39,8 @@ export interface DurationsOptions {
     timeout?: number;
     writesOnly?: boolean;
     timezone?: string;
-    // Group adjacent durations by one of: entity, language, dependencies,
-    // os, editor, category, or machine.
-    sliceBy?: string;
+    // Primary key for slicing durations. Defaults to "project".
+    sliceBy?: DurationsSliceBy;
 }
 
 export class DurationsResource extends BaseResource {

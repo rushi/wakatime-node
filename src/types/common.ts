@@ -27,9 +27,10 @@ export interface Pagination {
     total_pages?: number | null | undefined;
 }
 
-// Predefined stats/summaries ranges. Callers may also pass explicit start/end
-// dates where an endpoint supports them, so string is accepted alongside.
-export type StatsRange = "last_7_days" | "last_30_days" | "last_6_months" | "last_year" | "all_time";
+// Stats and insights range: a named range, a year (`"2025"`), or a month
+// (`"2025-03"`).
+export type StatsRange =
+    "last_7_days" | "last_30_days" | "last_6_months" | "last_year" | "all_time" | `${number}` | `${number}-${number}`;
 
 // A single grouped metric (language, editor, project, ...) as it appears in
 // stats and summaries payloads.

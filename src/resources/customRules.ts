@@ -1,31 +1,60 @@
 import type { DataEnvelope } from "../types/common.js";
 import { BaseResource } from "./base.js";
 
+export type CustomRuleAction = "change" | "delete";
+
+export type CustomRuleOperation = "equals" | "contains" | "starts with" | "ends with";
+
+export interface CustomRuleDestination {
+    id?: string;
+    // Heartbeat property to overwrite.
+    destination: string;
+    destination_value: string;
+}
+
 export interface CustomRule {
     id: string;
-    name?: string;
-    language?: string | null;
-    project?: string | null;
-    entities?: string[];
-    entities_type?: string;
+    action: CustomRuleAction;
+    // Heartbeat property the rule matches on.
+    source: string;
+    operation: CustomRuleOperation;
+    source_value: string;
+    destinations: CustomRuleDestination[];
+    // Unique execution order across the user's rules.
+    priority: number;
+    job_id?: string;
     created_at?: string;
     modified_at?: string | null;
 }
 
-// Body accepted when creating/updating a custom rule via PUT. Fields mirror the
-// rule object; supply what the rule should match on.
+// One rule in the PUT body. Pass `id` to update an existing rule.
 export interface CustomRuleInput {
-    name?: string;
-    language?: string;
-    project?: string;
-    entities?: string[];
-    entities_type?: string;
+    id?: string;
+    action: CustomRuleAction;
+    source: string;
+    operation: CustomRuleOperation;
+    source_value: string;
+    destination: string;
+    destination_value: string;
+    priority: number;
+}
+
+export interface CustomRuleChanges {
+    added: unknown[];
+    removed: unknown[];
+    rearranged: unknown[];
+}
+
+export interface CustomRulesUpdateResult {
+    changes: CustomRuleChanges;
+    // Background job reapplying the rules to past stats; poll with `progress()`.
+    job_id?: string;
 }
 
 export interface CustomRulesProgress {
-    percent_calculated?: number;
-    is_up_to_date?: boolean;
-    status?: string;
+    // 0 to 100.
+    progress: number;
+    job_id: string;
 }
 
 export interface CustomRulesOptions {
@@ -33,7 +62,7 @@ export interface CustomRulesOptions {
 }
 
 export class CustomRulesResource extends BaseResource {
-    // GET /users/:user/custom_rules - the user's custom detection rules.
+    // GET /users/:user/custom_rules - the user's custom rules.
     async list(options: CustomRulesOptions = {}): Promise<CustomRule[]> {
         const response = await this.http.get<DataEnvelope<CustomRule[]>>(
             `${this.userSegment(options.user)}/custom_rules`,
@@ -41,31 +70,35 @@ export class CustomRulesResource extends BaseResource {
         return response.data;
     }
 
-    // PUT /users/:user/custom_rules - create or update a custom rule.
-    async upsert(rule: CustomRuleInput, options: CustomRulesOptions = {}): Promise<CustomRule> {
-        const response = await this.http.put<DataEnvelope<CustomRule>>(
+    // PUT /users/:user/custom_rules - create or update rules.
+    async update(rules: CustomRuleInput[], options: CustomRulesOptions = {}): Promise<CustomRulesUpdateResult> {
+        const response = await this.http.put<DataEnvelope<CustomRulesUpdateResult>>(
             `${this.userSegment(options.user)}/custom_rules`,
-            rule,
+            rules,
         );
         return response.data;
     }
 
-    // DELETE /users/:user/custom_rules/:rule_id - remove a custom rule.
+    // DELETE /users/:user/custom_rules/:rule_id - remove one rule. Past stats
+    // are not recalculated.
     async delete(ruleId: string, options: CustomRulesOptions = {}): Promise<void> {
         const path = `${this.userSegment(options.user)}/custom_rules/${encodeURIComponent(ruleId)}`;
         await this.http.delete<unknown>(path);
     }
 
-    // GET /users/:user/custom_rules_progress - recalculation progress.
-    async progress(options: CustomRulesOptions = {}): Promise<CustomRulesProgress> {
+    // GET /users/:user/custom_rules_progress - progress of the job that
+    // reapplies rules to past stats.
+    async progress(jobId: string, options: CustomRulesOptions = {}): Promise<CustomRulesProgress> {
         const response = await this.http.get<DataEnvelope<CustomRulesProgress>>(
             `${this.userSegment(options.user)}/custom_rules_progress`,
+            { params: { job_id: jobId } },
         );
         return response.data;
     }
 
-    // DELETE /users/:user/custom_rules_progress - reset recalculation progress.
-    async resetProgress(options: CustomRulesOptions = {}): Promise<void> {
+    // DELETE /users/:user/custom_rules_progress - abort reapplying rules to past
+    // stats. Rules still apply to new heartbeats.
+    async cancelProgress(options: CustomRulesOptions = {}): Promise<void> {
         await this.http.delete<unknown>(`${this.userSegment(options.user)}/custom_rules_progress`);
     }
 }

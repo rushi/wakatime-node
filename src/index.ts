@@ -39,6 +39,12 @@ export type {
 } from "./resources/oauth.js";
 
 // Resource response and option types.
+export type {
+    AggregatedStats,
+    AggregatedStatsEntry,
+    AggregatedStatsMetric,
+    AggregatedStatsRange,
+} from "./resources/aggregatedStats.js";
 export type { AllTimeOptions, AllTimeSinceToday } from "./resources/allTimeSinceToday.js";
 export type {
     Commit,
@@ -48,10 +54,20 @@ export type {
     CommitsResponse,
     SingleCommitResponse,
 } from "./resources/commits.js";
-export type { CustomRule, CustomRuleInput, CustomRulesOptions, CustomRulesProgress } from "./resources/customRules.js";
+export type {
+    CustomRule,
+    CustomRuleAction,
+    CustomRuleChanges,
+    CustomRuleDestination,
+    CustomRuleInput,
+    CustomRuleOperation,
+    CustomRulesOptions,
+    CustomRulesProgress,
+    CustomRulesUpdateResult,
+} from "./resources/customRules.js";
 export type { CreateDataDumpOptions, DataDump, DataDumpsOptions, DataDumpType } from "./resources/dataDumps.js";
-export type { Duration, DurationsOptions, DurationsResponse } from "./resources/durations.js";
-export type { Editor } from "./resources/editors.js";
+export type { Duration, DurationsOptions, DurationsResponse, DurationsSliceBy } from "./resources/durations.js";
+export type { Editor, EditorsOptions } from "./resources/editors.js";
 export type {
     BulkExternalDurationResult,
     BulkExternalDurationsResponse,
@@ -77,10 +93,28 @@ export type {
     LeaderboardsOptions,
     PrivateLeaderboard,
 } from "./resources/leaderboards.js";
-export type { Leader, LeaderRunningTotal, LeadersOptions, LeadersResponse, LeaderUser } from "./resources/leaders.js";
+export type {
+    Leader,
+    LeaderboardType,
+    LeaderRunningTotal,
+    LeadersOptions,
+    LeadersResponse,
+    LeaderUser,
+} from "./resources/leaders.js";
 export type { MachineName, MachineNamesOptions } from "./resources/machineNames.js";
 export type { WakatimeMeta } from "./resources/meta.js";
-export type { Dashboard, DashboardMember, DashboardSummariesOptions, Org, OrgsOptions } from "./resources/orgs.js";
+export type {
+    Dashboard,
+    DashboardMember,
+    DashboardSummariesOptions,
+    MemberSummariesOptions,
+    Org,
+    OrgCustomRule,
+    OrgCustomRuleInput,
+    OrgCustomRulesUpdateResult,
+    OrgDurationsOptions,
+    OrgsOptions,
+} from "./resources/orgs.js";
 export type { ProgramLanguage } from "./resources/programLanguages.js";
 export type { Project, ProjectRepository, ProjectsOptions } from "./resources/projects.js";
 export type { StatsBestDay, StatsOptions, WakatimeStats } from "./resources/stats.js";
@@ -88,6 +122,7 @@ export type { StatusBarOptions, StatusBarToday } from "./resources/statusBar.js"
 export type {
     DailySummary,
     GrandTotal,
+    SummariesNamedRange,
     SummariesOptions,
     SummariesResponse,
     SummariesTotals,

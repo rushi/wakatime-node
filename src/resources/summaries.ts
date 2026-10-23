@@ -46,13 +46,25 @@ export interface SummariesResponse {
     daily_average?: SummariesTotals & { days_including_holidays?: number; days_minus_holidays?: number };
 }
 
+export type SummariesNamedRange =
+    | "Today"
+    | "Yesterday"
+    | "Last 7 Days"
+    | "Last 7 Days from Yesterday"
+    | "Last 14 Days"
+    | "Last 30 Days"
+    | "This Week"
+    | "Last Week"
+    | "This Month"
+    | "Last Month";
+
 export interface SummariesOptions {
     user?: string;
     // Explicit date window (YYYY-MM-DD). Required unless `range` is given.
     start?: string;
     end?: string;
-    // Named range alternative to start/end, e.g. "Today" or "last_7_days".
-    range?: string;
+    // Named range alternative to start/end.
+    range?: SummariesNamedRange;
     project?: string;
     branches?: string;
     timeout?: number;

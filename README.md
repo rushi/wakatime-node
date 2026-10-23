@@ -1,16 +1,14 @@
-## wakatime-node
+# wakatime-node
 
 [![npm version](https://img.shields.io/npm/v/wakatime-node.svg)](https://www.npmjs.com/package/wakatime-node)
 
 Typed TypeScript SDK for the [WakaTime REST API](https://wakatime.com/developers). It handles authentication, error mapping, retries, and pagination so you call `client.stats.get("last_7_days")` and get back a typed object instead of hand-rolling fetch requests.
 
-API reference: https://wakatime.com/developers
-
-- Full coverage of the WakaTime API (~40 resources)
+- Full coverage of the WakaTime API (22 resource groups)
 - Two auth modes: secret API key or OAuth 2.0 bearer token
 - Typed responses and options for every endpoint
-- Automatic retry on rate limits (`429`), throttle redirects (`302`), and server errors (`5xx`)
-- Async iteration over paginated endpoints (commits)
+- Automatic retry of `GET`, `PUT`, and `DELETE` on rate limits (`429`), throttle redirects (`302`), and server errors (`5xx`)
+- Paginated lists fetched in full, plus async iteration over commits
 - Typed error hierarchy you can `catch` and narrow
 
 ## Installation
@@ -74,22 +72,28 @@ const token = await exchangeCode({
 const client = new WakatimeClient({ accessToken: token.access_token });
 
 // 3. Refresh when the access token expires, or revoke on disconnect.
-await refreshToken({/* clientId, clientSecret, redirectUri, refreshToken */} as never);
+await refreshToken({
+    clientId: process.env.WAKATIME_CLIENT_ID!,
+    clientSecret: process.env.WAKATIME_CLIENT_SECRET!,
+    redirectUri: "https://your.app/callback",
+    refreshToken: token.refresh_token!,
+});
 await revokeToken({ clientId: "...", clientSecret: "...", token: token.access_token });
 ```
 
 ## Configuration
 
-```ts
-new WakatimeClient({
-    apiKey: "waka_...", // or accessToken
-    useApiKeyQueryParam: false, // send key as ?api_key= instead of a Basic header
-    baseURL: undefined, // override the API base URL (e.g. a proxy)
-    timeoutMs: 30_000, // per-request timeout
-    maxRetries: 2, // retries on 429/302/5xx; set 0 to disable
-    userAgent: undefined, // custom User-Agent header
-});
-```
+| Option                | Default                           | Description                                                                      |
+| --------------------- | --------------------------------- | -------------------------------------------------------------------------------- |
+| `apiKey`              |                                   | Secret API key. Mutually exclusive with `accessToken`.                           |
+| `accessToken`         |                                   | OAuth 2.0 access token. Mutually exclusive with `apiKey`.                        |
+| `useApiKeyQueryParam` | `false`                           | Send the API key as `?api_key=` instead of a Basic header. Ignored with OAuth.   |
+| `baseURL`             | `https://api.wakatime.com/api/v1` | Override the API base URL, for example to route through a proxy.                 |
+| `timeoutMs`           | `30000`                           | Per-request timeout in milliseconds.                                             |
+| `maxRetries`          | `2`                               | Retries on `429`/`302`/`5xx` for `GET`, `PUT`, and `DELETE`. Set `0` to disable. |
+| `userAgent`           | `wakatime-node/<version>`         | Value of the `User-Agent` request header.                                        |
+
+The SDK never retries `POST`, because a retried create could duplicate heartbeats, durations, or data dumps.
 
 ## Resources
 
@@ -105,7 +109,9 @@ const today = await wakatime.statusBar.today();
 
 ### Pagination
 
-Paginated endpoints expose an async iterator alongside single-page `list`:
+`projects.list()`, `machineNames.list()`, and `userAgents.list()` walk every page and return the full array.
+
+`commits` exposes an async iterator alongside the single-page `list`:
 
 ```ts
 for await (const commit of wakatime.commits.iterate("my-project")) {
@@ -131,15 +137,18 @@ try {
 }
 ```
 
+Every `WakatimeError` also carries the `method` and `url` of the failed request. The original axios error is attached as `cause`, with the `Authorization` header and `api_key` redacted.
+
 Subclasses: `WakatimeValidationError` (400), `WakatimeAuthError` (401/403), `WakatimeNotFoundError` (404), `WakatimeRateLimitError` (429), `WakatimeServerError` (5xx), `WakatimeNetworkError` (no response), `WakatimeConfigError` (bad client options).
 
-A `202` response (stats not yet up to date) is not an error; the payload is returned with `is_up_to_date` and `percent_calculated` so you can poll.
+A `202` response (stats not yet up to date) resolves without throwing. The SDK returns the payload with `is_up_to_date` and `percent_calculated` so you can poll.
 
 ## Development
 
 ```bash
 pnpm install
 pnpm typecheck
+pnpm lint
 pnpm test
 pnpm build
 ```

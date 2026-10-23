@@ -55,7 +55,8 @@ describe.skipIf(liveCredentials.length === 0)("live read endpoints", () => {
             expect(Array.isArray(projects)).toBe(true);
         });
 
-        it("machineNames and userAgents return arrays", async () => {
+        // list() walks every page; an active account can have ~30 pages at ~1.5s each.
+        it("machineNames and userAgents return arrays", { timeout: 120_000 }, async () => {
             const [machines, agents] = await Promise.all([client.machineNames.list(), client.userAgents.list()]);
             expect(Array.isArray(machines)).toBe(true);
             expect(Array.isArray(agents)).toBe(true);

@@ -1,4 +1,4 @@
-import { snakeCase } from "lodash-es";
+import { snakeCase } from "es-toolkit";
 
 type QueryValue = string | number | boolean;
 

@@ -2,7 +2,7 @@ import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import importPlugin from "eslint-plugin-import";
 import unicorn from "eslint-plugin-unicorn";
-import eslintComments from "eslint-plugin-eslint-comments";
+import eslintComments from "@eslint-community/eslint-plugin-eslint-comments";
 import noUseExtendNative from "eslint-plugin-no-use-extend-native";
 
 export default tseslint.config(

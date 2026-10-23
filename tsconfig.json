@@ -17,8 +17,9 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true
+    "noEmit": true,
+    "allowJs": true
   },
-  "include": ["src", "test", "tsup.config.ts", "vitest.config.ts"],
+  "include": ["src", "test", "types", "eslint.config.js", "tsup.config.ts", "vitest.config.ts"],
   "exclude": ["node_modules", "dist"]
 }

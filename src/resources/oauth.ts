@@ -19,7 +19,7 @@ export interface OAuthToken {
 export interface AuthorizeUrlParams {
     clientId: string;
     redirectUri: string;
-    // "code" for the standard server-side flow (365-day tokens); "token" for
+    // "code" for the standard server-side flow (100-year tokens); "token" for
     // the implicit flow (12-hour tokens).
     responseType?: "code" | "token";
     scopes?: WakatimeScope[];
@@ -41,11 +41,24 @@ export interface RefreshTokenParams {
     refreshToken: string;
 }
 
-export interface RevokeTokenParams {
+interface RevokeCredentials {
     clientId: string;
     clientSecret: string;
-    token: string;
 }
+
+/**
+ * Revoke target, one of the four forms /oauth/revoke accepts:
+ * - `{ token }`: one access or refresh token.
+ * - `{ token, all: true }`: every token of the user who owns `token`.
+ * - `{ userId }`: every token of that user.
+ * - `{ all: true }`: every token of every user of the app.
+ */
+export type RevokeTokenParams = RevokeCredentials &
+    (
+        | { token: string; all?: boolean; userId?: never }
+        | { userId: string; token?: never; all?: never }
+        | { all: true; token?: never; userId?: never }
+    );
 
 // Build the URL to redirect users to so they can authorize the app.
 export const buildAuthorizeUrl = (params: AuthorizeUrlParams): string => {
@@ -129,11 +142,19 @@ export const refreshToken = async (params: RefreshTokenParams): Promise<OAuthTok
     return parseTokenResponse(data);
 };
 
-// POST /oauth/revoke to invalidate an access or refresh token.
+// POST /oauth/revoke. WakaTime returns 200 even for already revoked or expired tokens.
 export const revokeToken = async (params: RevokeTokenParams): Promise<void> => {
-    await postForm("revoke", {
-        client_id: params.clientId,
-        client_secret: params.clientSecret,
-        token: params.token,
-    });
+    const { clientId, clientSecret, token, userId, all } = params;
+    const body: Record<string, string> = { client_id: clientId, client_secret: clientSecret };
+    if (token !== undefined) {
+        body.token = token;
+    }
+    if (userId !== undefined) {
+        body.user_id = userId;
+    }
+    if (all) {
+        body.all = "true";
+    }
+
+    await postForm("revoke", body);
 };

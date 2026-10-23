@@ -78,4 +78,26 @@ describe("oauth helpers", () => {
             revokeToken({ clientId: "cid", clientSecret: "sec", token: "waka_tok_1" }),
         ).resolves.toBeUndefined();
     });
+
+    it.each([
+        [{ token: "waka_tok_1" }, { token: "waka_tok_1" }],
+        [
+            { token: "waka_tok_1", all: true },
+            { token: "waka_tok_1", all: "true" },
+        ],
+        [{ userId: "u1" }, { user_id: "u1" }],
+        [{ all: true as const }, { all: "true" }],
+    ])("sends the revoke body for %o", async (target, expected) => {
+        let body: Record<string, string> = {};
+        server.use(
+            http.post(REVOKE_URL, async ({ request }) => {
+                body = Object.fromEntries(new URLSearchParams(await request.text()));
+                return HttpResponse.json({});
+            }),
+        );
+
+        await revokeToken({ clientId: "cid", clientSecret: "sec", ...target });
+
+        expect(body).toEqual({ client_id: "cid", client_secret: "sec", ...expected });
+    });
 });

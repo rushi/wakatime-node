@@ -9,8 +9,8 @@ import { defineConfig } from "vitest/config";
 // Test-runner only; does not affect the published SDK.
 setDefaultResultOrder("ipv4first");
 
-// Load .env.local into process.env so the live tests can read WAKATIME_API_KEY
-// without the caller exporting it manually. Keys already in the environment win.
+// Load .env.local into process.env so the live tests can read their credentials
+// without the caller exporting them manually. Keys already in the environment win.
 const loadEnvLocal = (): void => {
     const envPath = fileURLToPath(new URL(".env.local", import.meta.url));
     if (!existsSync(envPath)) {
@@ -36,7 +36,7 @@ const loadEnvLocal = (): void => {
 loadEnvLocal();
 
 // Live integration tests against the real WakaTime API. No MSW setup: these
-// make real network calls, gated behind the WAKATIME_API_KEY env var.
+// make real network calls, gated behind the credentials in test/functional/credentials.ts.
 export default defineConfig({
     test: {
         environment: "node",

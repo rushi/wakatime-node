@@ -6,7 +6,7 @@
 pnpm install
 ```
 
-Requires Node.js 20+ (see `.nvmrc`) and pnpm 9+.
+Requires Node.js 20+ (see `.node-version`) and pnpm 9+.
 
 ## Workflow
 

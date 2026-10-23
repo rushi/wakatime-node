@@ -37,9 +37,7 @@ describe("projects resource", () => {
 
     it("returns an empty list when the first page is empty", async () => {
         server.use(
-            http.get(`${BASE}/users/current/projects`, () =>
-                HttpResponse.json({ data: [], page: 1, next_page: null }),
-            ),
+            http.get(`${BASE}/users/current/projects`, () => HttpResponse.json({ data: [], page: 1, next_page: null })),
         );
 
         const projects = await makeClient().projects.list();

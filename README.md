@@ -26,7 +26,7 @@ Requires Node.js 20 or newer. The package is ESM-only.
 ```ts
 import { WakatimeClient } from "wakatime-node";
 
-const wakatime = new WakatimeClient({ apiKey: process.env.WAKATIME_API_KEY });
+const wakatime = new WakatimeClient({ accessToken: process.env.WAKATIME_OAUTH_TOKEN });
 
 const me = await wakatime.users.current();
 const stats = await wakatime.stats.get("last_7_days");
@@ -38,11 +38,13 @@ console.log(me.username, stats.human_readable_total);
 
 Provide exactly one credential. Supplying both, or neither, throws a `WakatimeConfigError` at construction.
 
+Use an OAuth 2.0 access token for apps, scripts, and integrations. WakaTime intends API keys for editor plugins that send coding activity. To call the API for your own account only, you can create a token at [wakatime.com/oauth](https://wakatime.com/oauth) without publishing an app.
+
 ```ts
 // Secret API key (HTTP Basic). Server-side only, never ship it to a browser.
 new WakatimeClient({ apiKey: "waka_..." });
 
-// OAuth 2.0 access token.
+// OAuth 2.0 access token, sent as `Authorization: Bearer <token>`.
 new WakatimeClient({ accessToken: "waka_tok_..." });
 ```
 
@@ -80,6 +82,17 @@ await refreshToken({
 });
 await revokeToken({ clientId: "...", clientSecret: "...", token: token.access_token });
 ```
+
+Tokens from `responseType: "code"` last 100 years. Tokens from `responseType: "token"` last 12 hours. Each app can hold 8 active tokens per user, and creating a 9th revokes the oldest.
+
+`revokeToken` accepts four targets alongside `clientId` and `clientSecret`. WakaTime returns `200` even when the token is already revoked or expired.
+
+| Target                 | Revokes                                   |
+| :--------------------- | :---------------------------------------- |
+| `{ token }`            | One access or refresh token.              |
+| `{ token, all: true }` | Every token of the user who owns `token`. |
+| `{ userId }`           | Every token of that user.                 |
+| `{ all: true }`        | Every token of every user of your app.    |
 
 ## Configuration
 
@@ -155,10 +168,10 @@ pnpm build
 
 Unit tests mock all HTTP with [MSW](https://mswjs.io) and run offline.
 
-Functional tests hit the live WakaTime API and are read-only. They run only when `WAKATIME_API_KEY` is set (via the environment or a `.env.local` file at the repo root), and skip otherwise:
+Functional tests hit the live WakaTime API and are read-only. They read `WAKATIME_OAUTH_TOKEN` and `WAKATIME_API_KEY` from the environment or a `.env.local` file at the repo root. Each suite runs once per credential you set, and skips when you set neither:
 
 ```bash
-WAKATIME_API_KEY=waka_... pnpm test:functional
+WAKATIME_OAUTH_TOKEN=waka_tok_... pnpm test:functional
 ```
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full contributor workflow.

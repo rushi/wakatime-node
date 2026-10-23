@@ -6,7 +6,7 @@ TypeScript SDK for the WakaTime REST API (`https://api.wakatime.com/api/v1`). Sc
 
 `pnpm test` is the offline unit suite, MSW-mocked. Target one file or name with `pnpm test test/resources/stats.test.ts` or `pnpm test -t "retries a 429"`.
 
-`pnpm test:functional` hits the real API, read-only. It reads `WAKATIME_API_KEY` from the environment or a repo-root `.env.local` and self-skips when absent. Its config forces IPv4 DNS because some sandboxes hang on IPv6-first egress; that setting stays in the test runner and never ships. Live tests belong only in `test/functional/`, outside the default suite.
+`pnpm test:functional` hits the real API, read-only. It reads `WAKATIME_OAUTH_TOKEN` and `WAKATIME_API_KEY` from the environment or a repo-root `.env.local`, runs each suite once per credential present (`test/functional/credentials.ts`), and self-skips when both are absent. Its config forces IPv4 DNS because some sandboxes hang on IPv6-first egress; that setting stays in the test runner and never ships. Live tests belong only in `test/functional/`, outside the default suite.
 
 ## Architecture
 

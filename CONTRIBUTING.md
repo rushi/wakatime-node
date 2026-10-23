@@ -33,7 +33,7 @@ See the "Adding a resource" section in `CLAUDE.md` for the pattern: one class pe
 
 ## Functional tests
 
-`pnpm test:functional` hits the real WakaTime API read-only and requires `WAKATIME_API_KEY` (env var or repo-root `.env.local`, gitignored). It self-skips when the key is absent and isn't run in CI.
+`pnpm test:functional` hits the real WakaTime API read-only and reads `WAKATIME_OAUTH_TOKEN` and `WAKATIME_API_KEY` (env var or repo-root `.env.local`, gitignored). Each suite runs once per credential set. It self-skips when both are absent and isn't run in CI.
 
 ## Pull requests
 
